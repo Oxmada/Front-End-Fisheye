@@ -63,3 +63,10 @@ h1 {
 .photographer_section article p.price {
     color: #757575;
 }
+
+.photographer-link {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

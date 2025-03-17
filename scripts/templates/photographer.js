@@ -13,10 +13,11 @@ function photographerTemplate(data) {
 
         const img = document.createElement( 'img' );
         img.setAttribute("src", picture)
-        img.setAttribute("alt", "Photo de profil");
+        img.setAttribute("alt", `Profil de ${name}`);
 
         const h2 = document.createElement( 'h2' );
         h2.textContent = name;
+        h2.setAttribute("aria-label", `Nom du photographe : ${name}`);
 
         link.appendChild(img);
         link.appendChild(h2);
@@ -39,5 +40,6 @@ function photographerTemplate(data) {
 
         return (article);
     }
-    return { name, id, picture, city, country, tagline, price, getUserCardDOM }
+    return {name, id, picture, city, country, tagline, price, getUserCardDOM}
+    
 }

@@ -41,11 +41,6 @@ async function getPhotographerData(photographerId) {
 
 // Récupère la promesse retournée par la fonction getPhotographerData
 getPhotographerData(photographerId).then((PhotographerData) => {
-  //Affiche les données du photographe et ses médias
-  console.log("photographer Data:", PhotographerData);
-});
-
-getPhotographerData(photographerId).then((PhotographerData) => {
   if (PhotographerData && PhotographerData.photographer) {
     const photographerCard = photographerTemplate(
       PhotographerData.photographer
@@ -54,18 +49,56 @@ getPhotographerData(photographerId).then((PhotographerData) => {
     // Sélectionne la balise <a>
     const link = photographerCard.querySelector(".photographer-link");
     if (link) {
-      // déplace les enfants de <a> vers le parent de <a>
+      // Déplace les enfants de <a> vers le parent de <a>
       while (link.firstChild) {
         link.parentNode.insertBefore(link.firstChild, link);
       }
 
       // Supprime la balise <a> qui est maintenant vide
-      link.parentNode.removeChild(link);
+      link.remove();
     }
 
+    const infoDiv = document.createElement("div");
+    infoDiv.classList.add("info-div");
+    photographerCard.appendChild(infoDiv);
+
+    const name = photographerCard.querySelector(".name");
+    if (name) {
+      infoDiv.appendChild(name);
+    }
+
+    const location = photographerCard.querySelector(".location");
+    if (location) {
+      infoDiv.appendChild(location);
+    }
+
+    const tagline = photographerCard.querySelector(".tagline");
+    if (tagline) {
+      infoDiv.appendChild(tagline);
+    }
+
+    const priceCounterLikeDiv = document.createElement("div");
+    priceCounterLikeDiv.classList.add("price_counter_like_div");
+    const main = document.querySelector("main");
+    main.appendChild(priceCounterLikeDiv);
+    const price = photographerCard.querySelector(".price");
+    priceCounterLikeDiv.appendChild(price);
+
+    //infoDiv.appendChild(price);
+    //if (price) {
+    //  infoDiv.appendChild(price);
+    //}
+
+    // Sélectionne .photograph-header
     const parentElement = document.querySelector(".photograph-header");
     if (parentElement) {
       parentElement.appendChild(photographerCard);
     }
   }
 });
+
+// const priceCounterLikeDiv = document.createElement("div");
+// const main = document.querySelector("main");
+// main.appendChild(priceCounterLikeDiv);
+// priceCounterLikeDiv.appendChild(price);
+//const price = photographerCard.querySelector(".price");

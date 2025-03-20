@@ -39,12 +39,22 @@ async function getPhotographerData(photographerId) {
   }
 }
 
+// Sélectionne le body
+const body = document.querySelector("body");
+
+// Créer une div et l'insère dans le body
+const priceCounterLikeDiv = document.createElement("div");
+priceCounterLikeDiv.classList.add("price_counter_like_div");
+body.appendChild(priceCounterLikeDiv);
+
 // Récupère la promesse retournée par la fonction getPhotographerData
 getPhotographerData(photographerId).then((PhotographerData) => {
   if (PhotographerData && PhotographerData.photographer) {
     const photographerCard = photographerTemplate(
       PhotographerData.photographer
     ).getUserCardDOM();
+
+    const parentElement = document.querySelector(".photograph-header");
 
     // Sélectionne la balise <a>
     const link = photographerCard.querySelector(".photographer-link");
@@ -58,36 +68,18 @@ getPhotographerData(photographerId).then((PhotographerData) => {
       link.remove();
     }
 
-    const infoDiv = document.createElement("div");
-    infoDiv.classList.add("info-div");
-    photographerCard.appendChild(infoDiv);
+    // Insère img dans photographer-header
+    const img = photographerCard.querySelector(".photographer-img");
+    parentElement.appendChild(img);
 
-    const name = photographerCard.querySelector(".name");
-    if (name) {
-      infoDiv.appendChild(name);
-    }
+    // Insère à nouveau button dans photographer-header de manière à le déplacer dans l'ordre du DOM
+    const button = document.querySelector(".contact_button");
+    parentElement.appendChild(button);
 
-    const location = photographerCard.querySelector(".location");
-    if (location) {
-      infoDiv.appendChild(location);
-    }
-
-    const tagline = photographerCard.querySelector(".tagline");
-    if (tagline) {
-      infoDiv.appendChild(tagline);
-    }
-
-    const priceCounterLikeDiv = document.createElement("div");
-    priceCounterLikeDiv.classList.add("price_counter_like_div");
-    const main = document.querySelector("main");
-    main.appendChild(priceCounterLikeDiv);
+    // Sélectionne et insère price dans la div priceCounterLikeDiv
     const price = photographerCard.querySelector(".price");
     priceCounterLikeDiv.appendChild(price);
 
-    // Sélectionne .photograph-header
-    const parentElement = document.querySelector(".photograph-header");
-    if (parentElement) {
-      parentElement.appendChild(photographerCard);
-    }
+    parentElement.appendChild(photographerCard);
   }
 });

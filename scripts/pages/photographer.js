@@ -84,11 +84,6 @@ getPhotographerData(photographerId).then((PhotographerData) => {
     const price = photographerCard.querySelector(".price");
     priceCounterLikeDiv.appendChild(price);
 
-    //infoDiv.appendChild(price);
-    //if (price) {
-    //  infoDiv.appendChild(price);
-    //}
-
     // Sélectionne .photograph-header
     const parentElement = document.querySelector(".photograph-header");
     if (parentElement) {
@@ -96,9 +91,3 @@ getPhotographerData(photographerId).then((PhotographerData) => {
     }
   }
 });
-
-// const priceCounterLikeDiv = document.createElement("div");
-// const main = document.querySelector("main");
-// main.appendChild(priceCounterLikeDiv);
-// priceCounterLikeDiv.appendChild(price);
-//const price = photographerCard.querySelector(".price");

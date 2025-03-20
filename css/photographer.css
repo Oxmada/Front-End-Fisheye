@@ -13,9 +13,41 @@ main {
     position: relative;
 }
 
+.photographer-article {
+    height: 100%;
+    margin-left: 50px;
+    margin-right: 50px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    align-items: center;
+}
+
 .photograph-header img {
     height: 200px;
     width: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.name {
+    color: #D3573C;
+    font-size: 64px;
+    margin-bottom: 10px;
+    font-weight: 400;
+}
+
+.location {
+    color: #901C1C;
+    font-size: 24px;
+    font-weight: 400;
+    margin: 12px 0;
+}
+
+.tagline {
+    font-size: 18px;
+    font-weight: 400;
+    color: #525252;
 }
 
 .contact_button {
@@ -89,18 +121,16 @@ form input {
     border-radius: 5px;
 }
 
-.photographer-article {
-    height: 100%;
-    margin-left: 50px;
-    margin-right: 50px;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row-reverse;
-    align-items: center;
-}
-
 .price_counter_like_div {
     position: absolute;
     bottom: 0;
     right: 50px;
+    background-color: #DB8876;
+    border-radius: 5px;;
+}
+
+.price {
+    margin: 10px;
+    font-size: 24px;
+    font-weight: 500;
 }

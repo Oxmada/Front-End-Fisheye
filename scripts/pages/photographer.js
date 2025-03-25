@@ -30,6 +30,8 @@ async function getPhotographerData(photographerId) {
       (item) => item.photographerId == photographerId
     );
 
+    console.log("Médias filtrés :", media);
+
     return {
       photographer,
       media,
@@ -39,13 +41,24 @@ async function getPhotographerData(photographerId) {
   }
 }
 
-// Sélectionne le body
+// Sélectionne le body & main
 const body = document.querySelector("body");
+const main = document.querySelector("main");
 
-// Créer une div et l'insère dans le body
+// Ajout de d'une div pour le prix et le conteur de like
 const priceCounterLikeDiv = document.createElement("div");
 priceCounterLikeDiv.classList.add("price_counter_like_div");
 body.appendChild(priceCounterLikeDiv);
+
+// Ajout une div pour ranger les médias
+const factoryMedia = document.createElement("div");
+factoryMedia.classList.add("factory_media");
+main.appendChild(factoryMedia);
+
+// Ajout d'une div media
+const media = document.createElement("div");
+media.classList.add("media");
+factoryMedia.appendChild(media);
 
 // Récupère la promesse retournée par la fonction getPhotographerData
 getPhotographerData(photographerId).then((PhotographerData) => {
@@ -81,5 +94,6 @@ getPhotographerData(photographerId).then((PhotographerData) => {
     priceCounterLikeDiv.appendChild(price);
 
     parentElement.appendChild(photographerCard);
+
   }
 });

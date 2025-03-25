@@ -44,5 +44,49 @@ function photographerTemplate(data) {
 
     return article;
   }
-  return { name, id, picture, city, country, tagline, price, getUserCardDOM };
+  return {name, id, picture, city, country, tagline, price, getUserCardDOM};
 }
+
+
+function mediaTemplate(data) {
+  const { id, photographerID, title, image, likes, date, price } = data;
+
+  const mediaPicture = `assets/images/${image}`;
+
+  function getMediaCardDOM() {
+    const article = document.createElement("article");
+    article.classList.add("media-article");
+
+    const img = document.createElement("img");
+    img.setAttribute("src", mediaPicture);
+    img.setAttribute("alt", `Image intitulée "${title}" par ${photographerName}`)
+    img.classList.add("media-img");
+
+    const h2 = document.createElement("h2");
+    h2.textContent = title;
+    h2.classList.add("media-title");
+
+    const p1 = document.createElement("p");
+    p1.textContent = `Likes: ${likes}`;
+    p1.classList.add(media-likes);
+
+    const p2 = document.createElement("p");
+    p2.textContent = `Date: ${new Date(date).toLocaleDateString()}`;
+    p2.classList.add(media-date);
+
+    const p3 = document.createElement("p");
+    p3.textContent = `${price}€`;
+    p3.classList.add("media-price");
+
+    article.appendChild(img);
+    article.appendChild("h2");
+    article.appendChild("p1");
+    article.appendChild("p2");
+    article.appendChild("p3");
+
+    return article;
+  }
+
+  return {id, photographerID, mediaPicture, title, likes, date, price, getMediaCardDOM};
+}
+

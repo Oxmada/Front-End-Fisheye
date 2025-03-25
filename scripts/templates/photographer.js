@@ -49,18 +49,39 @@ function photographerTemplate(data) {
 
 
 function mediaTemplate(data) {
-  const { id, photographerID, title, image, likes, date, price } = data;
+  const { id, photographerId, title, image, video, likes, date, price } = data;
 
-  const mediaPicture = `assets/images/${image}`;
+  let mediaElement;
+
+  if (image) {
+    mediaElement = `assets/albums/${photographerId}/${image}`;
+  } else if (video) {
+    mediaElement = `assets/albums/${photographerId}/${video}`;
+  } else {
+    console.error("Aucun média (image ou vidéo) trouvé pour", title);
+    return;
+  }
 
   function getMediaCardDOM() {
     const article = document.createElement("article");
     article.classList.add("media-article");
 
-    const img = document.createElement("img");
-    img.setAttribute("src", mediaPicture);
-    img.setAttribute("alt", `Image intitulée "${title}" par ${photographerName}`)
-    img.classList.add("media-img");
+    // Créer l'élément multimédia image ou vidéo
+
+    if (image) {
+    const imageElement = document.createElement("img");
+    imageElement.setAttribute("src", mediaElement);
+    imageElement.setAttribute("alt", `Image intitulée "${title}"`)
+    imageElement.classList.add("media-img");
+    article.appendChild(imageElement);
+    } else if (video){
+      const videoElement = document.createElement("video");
+      videoElement.setAttribute("src", mediaElement);
+      videoElement.setAttribute("alt", `Vidéo intitulée "${title}"`);
+      videoElement.setAttribute("controls", "true");
+      videoElement.classList.add("media-video");
+      article.appendChild(videoElement);
+    }
 
     const h2 = document.createElement("h2");
     h2.textContent = title;
@@ -78,15 +99,14 @@ function mediaTemplate(data) {
     p3.textContent = `${price}€`;
     p3.classList.add("media-price");
 
-    article.appendChild(img);
-    article.appendChild("h2");
-    article.appendChild("p1");
-    article.appendChild("p2");
-    article.appendChild("p3");
+    article.appendChild(h2);
+    article.appendChild(p1);
+    article.appendChild(p2);
+    article.appendChild(p3);
 
     return article;
   }
 
-  return {id, photographerID, mediaPicture, title, likes, date, price, getMediaCardDOM};
+  return {id, photographerId, mediaElement, title, likes, date, price, getMediaCardDOM};
 }
 

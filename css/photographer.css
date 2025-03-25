@@ -133,7 +133,7 @@ form input {
     font-weight: 500;
 }
 
-.factory_media {
+.media {
     display: grid;
-    grid-column: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
 }

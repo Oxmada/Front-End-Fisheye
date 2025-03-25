@@ -50,15 +50,11 @@ const priceCounterLikeDiv = document.createElement("div");
 priceCounterLikeDiv.classList.add("price_counter_like_div");
 body.appendChild(priceCounterLikeDiv);
 
-// Ajout une div pour ranger les médias
-const factoryMedia = document.createElement("div");
-factoryMedia.classList.add("factory_media");
-main.appendChild(factoryMedia);
 
 // Ajout d'une div media
 const media = document.createElement("div");
 media.classList.add("media");
-factoryMedia.appendChild(media);
+main.appendChild(media);
 
 // Récupère la promesse retournée par la fonction getPhotographerData
 getPhotographerData(photographerId).then((PhotographerData) => {
@@ -95,5 +91,13 @@ getPhotographerData(photographerId).then((PhotographerData) => {
 
     parentElement.appendChild(photographerCard);
 
+    // Afiche les médias associés au photographe
+    if (PhotographerData.media) {
+      PhotographerData.media.forEach(mediaItem => {
+        const mediaCard = mediaTemplate(mediaItem).getMediaCardDOM();
+        const mediaContainer = document.querySelector(".media");
+        mediaContainer.appendChild(mediaCard);
+      });
+    }
   }
 });

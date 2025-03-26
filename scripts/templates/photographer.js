@@ -88,16 +88,22 @@ function mediaTemplate(data) {
     h2.classList.add("media-title");
 
     const p1 = document.createElement("p");
-    p1.textContent = `Likes: ${likes}`;
-    p1.classList.add(media-likes);
+    p1.textContent = likes;
+    p1.classList.add("media-likes");
 
     const p2 = document.createElement("p");
-    p2.textContent = `Date: ${new Date(date).toLocaleDateString()}`;
-    p2.classList.add(media-date);
+    p2.textContent = date;
+    p2.classList.add("media-date");
 
     const p3 = document.createElement("p");
-    p3.textContent = `${price}€`;
+    p3.textContent = price;
     p3.classList.add("media-price");
+
+    
+    const fullHeart = document.createElement("i");
+    fullHeart.classList.add("fa-solid", "fa-heart");
+
+    p1.appendChild(fullHeart);
 
     article.appendChild(h2);
     article.appendChild(p1);

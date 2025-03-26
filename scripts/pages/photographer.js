@@ -89,6 +89,7 @@ getPhotographerData(photographerId).then((PhotographerData) => {
     const price = photographerCard.querySelector(".price");
     priceCounterLikeDiv.appendChild(price);
 
+
     parentElement.appendChild(photographerCard);
 
     // Afiche les médias associés au photographe
@@ -97,7 +98,11 @@ getPhotographerData(photographerId).then((PhotographerData) => {
         const mediaCard = mediaTemplate(mediaItem).getMediaCardDOM();
         const mediaContainer = document.querySelector(".media");
         mediaContainer.appendChild(mediaCard);
+
       });
     }
+
   }
 });
+
+

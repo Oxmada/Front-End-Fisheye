@@ -2,9 +2,12 @@
     display: none;
 }
 
+
 main {
     position: relative;
+    margin: 0 100px;
 }
+
 
 .header {
     display: unset;
@@ -136,4 +139,41 @@ form input {
 .media {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    justify-content: space-between;
+    gap: 50px;
+    margin-top: 50px;
+}
+
+.media-article {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    color: #901C1C;
+
+}
+
+
+.media-img,
+.media-video {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.media-date {
+    display: none;
+}
+
+.media-price {
+    display: none;
+}
+
+.media-likes {
+    font-size: 24px
+}
+
+.media-likes i {
+    margin-left: 10px;
 }

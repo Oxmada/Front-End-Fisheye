@@ -51,6 +51,40 @@ priceCounterLikeDiv.classList.add("price_counter_like_div");
 body.appendChild(priceCounterLikeDiv);
 
 
+// Ajout d'une div mediaFiltre
+const mediaFiltre = document.createElement("div");
+mediaFiltre.classList.add("media-filtre");
+main.appendChild(mediaFiltre);
+
+// Ajout du label
+const label = document.createElement("label");
+label.setAttribute("for", "mySelect");
+label.textContent = "Trier par ";
+
+// Ajout du select
+const select = document.createElement("select");
+select.setAttribute("id", "mySelect");
+
+// Création des options dans un tableau
+const options = [
+    { text: "Popularité", value: "popularity" },
+    { text: "Date", value: "date" },
+    { text: "Titre", value: "title" }
+];
+
+// Ajout des options au select
+options.forEach(option => {
+    const optionElement = document.createElement("option");
+    optionElement.textContent = option.text;
+    optionElement.value = option.value;
+    select.appendChild(optionElement);
+});
+
+// Ajout du label et du select au conteneur mediaFiltre
+mediaFiltre.appendChild(label);
+mediaFiltre.appendChild(select);
+
+
 // Ajout d'une div media
 const media = document.createElement("div");
 media.classList.add("media");
@@ -88,7 +122,6 @@ getPhotographerData(photographerId).then((PhotographerData) => {
     // Sélectionne et insère price dans la div priceCounterLikeDiv
     const price = photographerCard.querySelector(".price");
     priceCounterLikeDiv.appendChild(price);
-
 
     parentElement.appendChild(photographerCard);
 

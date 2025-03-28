@@ -60,6 +60,7 @@ main.appendChild(mediaFiltre);
 const label = document.createElement("label");
 label.setAttribute("for", "mySelect");
 label.textContent = "Trier par ";
+label.classList.add("labelSelect")
 
 // Ajout du select
 const select = document.createElement("select");

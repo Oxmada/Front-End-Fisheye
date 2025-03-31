@@ -91,6 +91,29 @@ const media = document.createElement("div");
 media.classList.add("media");
 main.appendChild(media);
 
+// Ajout de la div lightbox-modal
+const lightboxModal = document.createElement("div");
+lightboxModal.classList.add("lightbox-modal");
+body.appendChild(lightboxModal);
+
+// Ajout de la div modal-media
+const modalMedia = document.createElement("div");
+modalMedia.classList.add("modal-media");
+lightboxModal.appendChild(modalMedia);
+
+// Création de l'image lightboxImg
+const lightboxImg = document.createElement("img");
+lightboxImg.id = "lightboxImg";
+modalMedia.appendChild(lightboxImg);
+
+// Création de la légende lightboxCaption
+const lightboxCaption = document.createElement("div");
+lightboxCaption.id = "lightboxCaption";
+lightboxCaption.classList.add("caption");
+modalMedia.appendChild(lightboxCaption);
+
+
+
 // Récupère la promesse retournée par la fonction getPhotographerData
 getPhotographerData(photographerId).then((PhotographerData) => {
   if (PhotographerData && PhotographerData.photographer) {
@@ -133,10 +156,36 @@ getPhotographerData(photographerId).then((PhotographerData) => {
         const mediaContainer = document.querySelector(".media");
         mediaContainer.appendChild(mediaCard);
 
+
+        // Récupérer les images
+        const mediaImg = document.querySelectorAll(".media-img");
+
+        // Ajouter un écouteur d'événements à chaque élément
+        mediaImg.forEach(img => {
+          img.addEventListener("click", openLightbox);
+        });
+
+        function openLightbox(event) {
+          const clickedImg = event.target;
+          
+          // Mettre à jour la source de l'image dans la lightbox
+          const lightboxImg = document.getElementById("lightboxImg");
+          lightboxImg.src = clickedImg.src;
+
+          // Mettre à jour la légende dans la lightbox
+          const lightboxCaption = document.getElementById("lightboxCaption");
+          lightboxCaption.innerText = clickedImg.alt;
+
+
+          lightboxModal.style.display = "flex";
+      
+        }
+
       });
     }
 
   }
 });
+
 
 

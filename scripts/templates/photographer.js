@@ -71,7 +71,7 @@ function mediaTemplate(data) {
     if (image) {
     const imageElement = document.createElement("img");
     imageElement.setAttribute("src", mediaElement);
-    imageElement.setAttribute("alt", `Image intitulée "${title}"`)
+    imageElement.setAttribute("alt", `${title}`)
     imageElement.classList.add("media-img");
     article.appendChild(imageElement);
     } else if (video){

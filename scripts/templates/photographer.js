@@ -62,7 +62,7 @@ function mediaTemplate(data) {
     return;
   }
 
-  function getMediaCardDOM() {
+  function getMediaCardDOM(index) {
     const article = document.createElement("article");
     article.classList.add("media-article");
 
@@ -72,13 +72,15 @@ function mediaTemplate(data) {
     const imageElement = document.createElement("img");
     imageElement.setAttribute("src", mediaElement);
     imageElement.setAttribute("alt", `${title}`)
+    imageElement.setAttribute("data-index", index);
     imageElement.classList.add("media-img");
     article.appendChild(imageElement);
     } else if (video){
       const videoElement = document.createElement("video");
       videoElement.setAttribute("src", mediaElement);
-      videoElement.setAttribute("alt", `Vidéo intitulée "${title}"`);
+      videoElement.setAttribute("data-alt", `${title}`);
       videoElement.setAttribute("controls", "true");
+      videoElement.setAttribute("data-index", index);
       videoElement.classList.add("media-video");
       article.appendChild(videoElement);
     }

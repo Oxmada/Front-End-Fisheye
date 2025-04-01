@@ -68,9 +68,9 @@ select.setAttribute("id", "mySelect");
 
 // Création des options dans un tableau
 const options = [
-    { text: "Popularité", value: "popularity" },
-    { text: "Date", value: "date" },
-    { text: "Titre", value: "title" }
+    {text: "Popularité", value: "popularity"},
+    {text: "Date", value: "date"},
+    {text: "Titre", value: "title"}
 ];
 
 // Ajout des options au select
@@ -91,26 +91,61 @@ const media = document.createElement("div");
 media.classList.add("media");
 main.appendChild(media);
 
-// Ajout de la div lightbox-modal
+// Ajout de la div lightboxModal
 const lightboxModal = document.createElement("div");
 lightboxModal.classList.add("lightbox-modal");
 body.appendChild(lightboxModal);
 
-// Ajout de la div modal-media
-const modalMedia = document.createElement("div");
-modalMedia.classList.add("modal-media");
-lightboxModal.appendChild(modalMedia);
+// Ajout de la div modalContainer
+const modalContainer = document.createElement("div");
+modalContainer.classList.add("modalContainer");
+lightboxModal.appendChild(modalContainer);
 
-// Création de l'image lightboxImg
-const lightboxImg = document.createElement("img");
-lightboxImg.id = "lightboxImg";
-modalMedia.appendChild(lightboxImg);
+
+// Ajout de la div navigationLeft
+const navigationLeft = document.createElement("div");
+navigationLeft.classList.add("navigation-left");
+modalContainer.appendChild(navigationLeft);
+
+
+// // Ajout de la div modal-media
+// const modalMedia = document.createElement("div");
+// modalMedia.classList.add("modal-media");
+// modalContainer.appendChild(modalMedia);
+
+
+// Création de l'élément multimédia
+const lightboxMedia = document.createElement("div");
+lightboxMedia.id = "lightboxMedia";
+modalContainer.appendChild(lightboxMedia);
+
+// Ajout de la div navigationRight
+const navigationRight = document.createElement("div");
+navigationRight.classList.add("navigation-right");
+modalContainer.appendChild(navigationRight);
+
+// Création des icônes de chevron
+const chevronLeft = document.createElement("i");
+chevronLeft.classList.add("fa-solid", "fa-chevron-left");
+chevronLeft.id = "chevronLeft";
+navigationLeft.appendChild(chevronLeft);
+
+const chevronRight = document.createElement("i");
+chevronRight.classList.add("fa-solid", "fa-chevron-right");
+chevronRight.id = "chevronRight"
+navigationRight.appendChild(chevronRight);
+
+// Création de l'icône croix 
+const cross = document.createElement("i");
+cross.classList.add("fa-solid", "fa-xmark");
+cross.id ="cross"
+navigationRight.appendChild(cross);
 
 // Création de la légende lightboxCaption
 const lightboxCaption = document.createElement("div");
 lightboxCaption.id = "lightboxCaption";
 lightboxCaption.classList.add("caption");
-modalMedia.appendChild(lightboxCaption);
+lightboxMedia.appendChild(lightboxCaption);
 
 
 
@@ -151,36 +186,74 @@ getPhotographerData(photographerId).then((PhotographerData) => {
 
     // Afiche les médias associés au photographe
     if (PhotographerData.media) {
-      PhotographerData.media.forEach(mediaItem => {
-        const mediaCard = mediaTemplate(mediaItem).getMediaCardDOM();
+      PhotographerData.media.forEach((mediaItem, index) => {
+        const mediaCard = mediaTemplate(mediaItem).getMediaCardDOM(index);
         const mediaContainer = document.querySelector(".media");
         mediaContainer.appendChild(mediaCard);
 
+        // Initialise l'index sur 0
+        let currentIndex = 0;
 
-        // Récupérer les images
-        const mediaImg = document.querySelectorAll(".media-img");
 
-        // Ajouter un écouteur d'événements à chaque élément
-        mediaImg.forEach(img => {
-          img.addEventListener("click", openLightbox);
+        // Récupère les images et kes vidéos
+        const mediaElements = document.querySelectorAll(".media-img, .media-video");
+
+        // Ajout d'un écouteur d'événements à chaque images
+        mediaElements.forEach(media => {
+          media.addEventListener("click", openLightbox);
         });
 
-        function openLightbox(event) {
-          const clickedImg = event.target;
-          
-          // Mettre à jour la source de l'image dans la lightbox
-          const lightboxImg = document.getElementById("lightboxImg");
-          lightboxImg.src = clickedImg.src;
+        // Ajout d'un écouter d'évènements
+        cross.addEventListener("click", closeLightbox);
 
-          // Mettre à jour la légende dans la lightbox
-          const lightboxCaption = document.getElementById("lightboxCaption");
-          lightboxCaption.innerText = clickedImg.alt;
+        // Ajout d'écouteurs d'événements pour les chevrons
+        chevronLeft.addEventListener("click", navigateLightbox);
+        chevronRight.addEventListener("click", navigateLightbox);
 
+        function updateLightboxMedia(mediaElement) {
+          lightboxMedia.innerHTML = ""; // Supprime l'ancien média
 
-          lightboxModal.style.display = "flex";
-      
+          let newContent;
+          if (mediaElement.tagName === "IMG") {
+            newContent = `<img src="${mediaElement.src}" alt="${mediaElement.alt}" class="lightbox-img">`;
+          } else if (mediaElement.tagName === "VIDEO") {
+            const videoAlt = mediaElement.getAttribute('data-alt'); // Récupère l'attribut data-al
+            newContent = `<video src="${mediaElement.src}" controls class="lightbox-video" data-alt="${videoAlt}"></video>`;
+          }
+          lightboxMedia.innerHTML = newContent;
+          lightboxMedia.appendChild(lightboxCaption);
+
+         // Mettre à jour la légende avec la valeur appropriée
+          if (mediaElement.tagName === "IMG") {
+            lightboxCaption.innerText = mediaElement.alt;
+          } else if (mediaElement.tagName === "VIDEO") {
+            lightboxCaption.innerText = mediaElement.getAttribute('data-alt');
+          }
+
         }
 
+        function openLightbox(event) {
+          const clickedMedia = event.target;
+          currentIndex = parseInt(clickedMedia.getAttribute("data-index"));
+
+          updateLightboxMedia(clickedMedia);
+          lightboxModal.style.display = "flex";
+        }
+
+        function navigateLightbox(event) {
+          const isLeft = event.target.id === "chevronLeft";
+          currentIndex = isLeft ? currentIndex - 1 : currentIndex + 1;
+
+          // Vérifie les limites
+          if (currentIndex < 0) currentIndex = mediaElements.length - 1;
+          if (currentIndex >= mediaElements.length) currentIndex = 0;
+
+          updateLightboxMedia(mediaElements[currentIndex]);
+        }
+
+        function closeLightbox() {
+          lightboxModal.style.display = "none";
+        }
       });
     }
 

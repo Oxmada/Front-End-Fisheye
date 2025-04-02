@@ -85,6 +85,12 @@ options.forEach(option => {
 mediaFiltre.appendChild(label);
 mediaFiltre.appendChild(select);
 
+// Ajout de l'écouteur d'événement pour détecter les changements de sélection
+select.addEventListener("change", () => {
+  const selectedValue = select.value;
+  sortAndDisplayMedia(selectedValue);
+});
+
 
 // Ajout d'une div media
 const media = document.createElement("div");
@@ -106,12 +112,6 @@ lightboxModal.appendChild(modalContainer);
 const navigationLeft = document.createElement("div");
 navigationLeft.classList.add("navigation-left");
 modalContainer.appendChild(navigationLeft);
-
-
-// // Ajout de la div modal-media
-// const modalMedia = document.createElement("div");
-// modalMedia.classList.add("modal-media");
-// modalContainer.appendChild(modalMedia);
 
 
 // Création de l'élément multimédia
@@ -155,6 +155,12 @@ getPhotographerData(photographerId).then((PhotographerData) => {
     const photographerCard = photographerTemplate(
       PhotographerData.photographer
     ).getUserCardDOM();
+
+    if (PhotographerData.media) {
+      mediaData = PhotographerData.media;
+      displayMedia(mediaData); // Afficher les médias initialement
+    }
+
 
     const parentElement = document.querySelector(".photograph-header");
 
@@ -259,6 +265,53 @@ getPhotographerData(photographerId).then((PhotographerData) => {
 
   }
 });
+
+
+function sortAndDisplayMedia(criteria) {
+  let sortedData;
+
+  // Utilisation d'un switch pour déterminer le critère de tri
+  switch (criteria) {
+    case "popularity":  //(nombre de likes décroissant)
+
+      // Crée une copie du tableau mediaData pour éviter de modifier l'original
+      sortedData = [...mediaData].sort((a, b) => b.likes - a.likes);
+      break;
+    case "date" :  //(du plus récent au plus ancien)
+      sortedData = [...mediaData].sort((a, b) => new Date(b.date) - new Date(a.date));
+      break;
+    case "title" :  //(ordre alphabétique)
+      sortedData = [...mediaData].sort((a, b) => {
+
+        // Vérifie que a.title et b.title sont des chaînes de caractères
+        if (typeof a.title === 'string' && typeof b.title === 'string') {
+          return a.title.localeCompare(b.title);
+        }
+        // Si l'un des titres n'est pas une chaîne, retourne 0 (pas de changement d'ordre)
+        return 0;
+      });
+      break;
+    default :  // Utilise les données originales si le critère ne correspond à rien
+    sortedData = mediaData;
+  }
+  // Affiche les médias triés
+  displayMedia(sortedData);
+}
+
+function displayMedia(data) {
+
+  // Vide la div avant d'afficher les medias triés
+  media.innerHTML = "";
+
+  // Parcourt chaque élément du tableau de données
+  data.forEach((mediaItem, index) => {
+    //Ajoute une carte de média pour chaque élément en utilisant la fonction mediaTemplate
+    const mediaCard = mediaTemplate(mediaItem).getMediaCardDOM(index);
+
+    // Ajout de la carte à la div media
+    media.appendChild(mediaCard);
+  })
+}
 
 
 

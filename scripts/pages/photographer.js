@@ -156,11 +156,6 @@ getPhotographerData(photographerId).then((PhotographerData) => {
       PhotographerData.photographer
     ).getUserCardDOM();
 
-    if (PhotographerData.media) {
-      mediaData = PhotographerData.media;
-      displayMedia(mediaData); // Afficher les médias initialement
-    }
-
 
     const parentElement = document.querySelector(".photograph-header");
 
@@ -192,10 +187,11 @@ getPhotographerData(photographerId).then((PhotographerData) => {
 
     // Afiche les médias associés au photographe
     if (PhotographerData.media) {
+  
       PhotographerData.media.forEach((mediaItem, index) => {
-        const mediaCard = mediaTemplate(mediaItem).getMediaCardDOM(index);
-        const mediaContainer = document.querySelector(".media");
-        mediaContainer.appendChild(mediaCard);
+          const mediaCard = mediaTemplate(mediaItem).getMediaCardDOM(index);
+          const mediaContainer = document.querySelector(".media");
+          mediaContainer.appendChild(mediaCard);
 
         // Initialise l'index sur 0
         let currentIndex = 0;
@@ -262,7 +258,6 @@ getPhotographerData(photographerId).then((PhotographerData) => {
         }
       });
     }
-
   }
 });
 

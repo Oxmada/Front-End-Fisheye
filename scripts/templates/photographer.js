@@ -49,7 +49,7 @@ function photographerTemplate(data) {
 
 
 function mediaTemplate(data) {
-  const { id, photographerId, title, image, video, likes, date, price } = data;
+  const { id, photographerId, title, image, video, likes: initialLikes, date, price } = data;
 
   let mediaElement;
 
@@ -89,9 +89,13 @@ function mediaTemplate(data) {
     h2.textContent = title;
     h2.classList.add("media-title");
 
+    let currentLikes = initialLikes;
+    const likesText = document.createElement("span");
+    likesText.textContent = `${currentLikes}`;
+
     const p1 = document.createElement("p");
-    p1.textContent = likes;
     p1.classList.add("media-likes");
+    p1.appendChild(likesText);
 
     const p2 = document.createElement("p");
     p2.textContent = date;
@@ -105,6 +109,15 @@ function mediaTemplate(data) {
     const fullHeart = document.createElement("i");
     fullHeart.classList.add("fa-solid", "fa-heart");
 
+    // Ajout d'un gestionnaire d'évènements sur l'icone coeur
+    fullHeart.addEventListener("click", () => {
+      if (!fullHeart.classList.contains("liked")) {
+        currentLikes++;
+        likesText.textContent = `${currentLikes}`;
+        fullHeart.classList.add("liked");
+      }
+    });
+
     p1.appendChild(fullHeart);
 
     article.appendChild(h2);
@@ -115,6 +128,6 @@ function mediaTemplate(data) {
     return article;
   }
 
-  return {id, photographerId, mediaElement, title, likes, date, price, getMediaCardDOM};
+  return {id, photographerId, mediaElement, title, likes: initialLikes, date, price, getMediaCardDOM};
 }
 

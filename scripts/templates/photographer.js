@@ -47,6 +47,7 @@ function photographerTemplate(data) {
   return {name, id, picture, city, country, tagline, price, getUserCardDOM};
 }
 
+// let totallikes = 0; // Initialise un compteur de like
 
 function mediaTemplate(data) {
   const { id, photographerId, title, image, video, likes: initialLikes, date, price } = data;
@@ -105,18 +106,18 @@ function mediaTemplate(data) {
     p3.textContent = price;
     p3.classList.add("media-price");
 
-    
     const fullHeart = document.createElement("i");
     fullHeart.classList.add("fa-solid", "fa-heart");
 
-    // Ajout d'un gestionnaire d'évènements sur l'icone coeur
-    fullHeart.addEventListener("click", () => {
-      if (!fullHeart.classList.contains("liked")) {
-        currentLikes++;
-        likesText.textContent = `${currentLikes}`;
-        fullHeart.classList.add("liked");
-      }
-    });
+    // // Ajout d'un gestionnaire d'évènements sur l'icone coeur
+    // fullHeart.addEventListener("click", () => {
+    //   if (!fullHeart.classList.contains("liked")) {
+    //     currentLikes++;
+    //     likesText.textContent = `${currentLikes}`;
+    //     fullHeart.classList.add("liked");
+    //     updateTotalLikes();
+    //   }
+    // });
 
     p1.appendChild(fullHeart);
 
@@ -128,6 +129,25 @@ function mediaTemplate(data) {
     return article;
   }
 
+  // function updateTotalLikes() {
+  //   const likeElements = document.querySelectorAll(".media-likes span");
+  //   let totalLikes = 0;
+
+  //   likeElements.forEach((likeElement) => {
+  //     totalLikes += parseInt(likeElement.textContent, 10);
+  //   });
+
+  //   // Afficher le total des likes dans la console
+  //   console.log("Total des likes : ", totalLikes);
+
+  //   return totalLikes;  // Retourne le total des likes
+    
+  // }
+
   return {id, photographerId, mediaElement, title, likes: initialLikes, date, price, getMediaCardDOM};
+  
+  
 }
+
+
 

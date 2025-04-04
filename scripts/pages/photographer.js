@@ -8,8 +8,7 @@ function getPhotographersId() {
 
 const photographerId = getPhotographersId();
 
-// Vérifie si l'ID est bien récupéré
-console.log("photographer ID:", photographerId);
+let mediaData = [];
 
 async function getPhotographerData(photographerId) {
   try {
@@ -30,6 +29,8 @@ async function getPhotographerData(photographerId) {
       (item) => item.photographerId == photographerId
     );
 
+    mediaData = media;
+
     console.log("Médias filtrés :", media);
 
     return {
@@ -49,6 +50,10 @@ const main = document.querySelector("main");
 const priceCounterLikeDiv = document.createElement("div");
 priceCounterLikeDiv.classList.add("price_counter_like_div");
 body.appendChild(priceCounterLikeDiv);
+
+const counterLikeDiv = document.createElement("div");
+counterLikeDiv.classList.add("counter_like_div");
+priceCounterLikeDiv.appendChild(counterLikeDiv);
 
 
 // Ajout d'une div mediaFiltre
@@ -84,6 +89,8 @@ options.forEach(option => {
 // Ajout du label et du select au conteneur mediaFiltre
 mediaFiltre.appendChild(label);
 mediaFiltre.appendChild(select);
+
+
 
 // Ajout de l'écouteur d'événement pour détecter les changements de sélection
 select.addEventListener("change", () => {
@@ -183,83 +190,29 @@ getPhotographerData(photographerId).then((PhotographerData) => {
     const price = photographerCard.querySelector(".price");
     priceCounterLikeDiv.appendChild(price);
 
+
+
     parentElement.appendChild(photographerCard);
 
     // Afiche les médias associés au photographe
     if (PhotographerData.media) {
-  
       PhotographerData.media.forEach((mediaItem, index) => {
-          const mediaCard = mediaTemplate(mediaItem).getMediaCardDOM(index);
-          const mediaContainer = document.querySelector(".media");
-          mediaContainer.appendChild(mediaCard);
+        manageMedia(mediaItem, index)
 
-        // Initialise l'index sur 0
-        let currentIndex = 0;
-
-
-        // Récupère les images et kes vidéos
-        const mediaElements = document.querySelectorAll(".media-img, .media-video");
-
-        // Ajout d'un écouteur d'événements à chaque images
-        mediaElements.forEach(media => {
-          media.addEventListener("click", openLightbox);
-        });
-
-        // Ajout d'un écouter d'évènements
-        cross.addEventListener("click", closeLightbox);
-
-        // Ajout d'écouteurs d'événements pour les chevrons
-        chevronLeft.addEventListener("click", navigateLightbox);
-        chevronRight.addEventListener("click", navigateLightbox);
-
-        function updateLightboxMedia(mediaElement) {
-          lightboxMedia.innerHTML = ""; // Supprime l'ancien média
-
-          let newContent;
-          if (mediaElement.tagName === "IMG") {
-            newContent = `<img src="${mediaElement.src}" alt="${mediaElement.alt}" class="lightbox-img">`;
-          } else if (mediaElement.tagName === "VIDEO") {
-            const videoAlt = mediaElement.getAttribute('data-alt'); // Récupère l'attribut data-al
-            newContent = `<video src="${mediaElement.src}" controls class="lightbox-video" data-alt="${videoAlt}"></video>`;
-          }
-          lightboxMedia.innerHTML = newContent;
-          lightboxMedia.appendChild(lightboxCaption);
-
-         // Mettre à jour la légende avec la valeur appropriée
-          if (mediaElement.tagName === "IMG") {
-            lightboxCaption.innerText = mediaElement.alt;
-          } else if (mediaElement.tagName === "VIDEO") {
-            lightboxCaption.innerText = mediaElement.getAttribute('data-alt');
-          }
-
-        }
-
-        function openLightbox(event) {
-          const clickedMedia = event.target;
-          currentIndex = parseInt(clickedMedia.getAttribute("data-index"));
-
-          updateLightboxMedia(clickedMedia);
-          lightboxModal.style.display = "flex";
-        }
-
-        function navigateLightbox(event) {
-          const isLeft = event.target.id === "chevronLeft";
-          currentIndex = isLeft ? currentIndex - 1 : currentIndex + 1;
-
-          // Vérifie les limites
-          if (currentIndex < 0) currentIndex = mediaElements.length - 1;
-          if (currentIndex >= mediaElements.length) currentIndex = 0;
-
-          updateLightboxMedia(mediaElements[currentIndex]);
-        }
-
-        function closeLightbox() {
-          lightboxModal.style.display = "none";
-        }
       });
     }
+
+
   }
 });
+
+// const updateTotalLikes = (totalLikes) => {
+//   const totalLikesElement = document.createElement("span");
+//   totalLikesElement.classList.add("total-likes");
+//   if (totalLikesElement) {
+//     totalLikesElement.textContent = `${totalLikes}`;
+//   }
+// };
 
 
 function sortAndDisplayMedia(criteria) {
@@ -300,13 +253,147 @@ function displayMedia(data) {
 
   // Parcourt chaque élément du tableau de données
   data.forEach((mediaItem, index) => {
-    //Ajoute une carte de média pour chaque élément en utilisant la fonction mediaTemplate
-    const mediaCard = mediaTemplate(mediaItem).getMediaCardDOM(index);
-
-    // Ajout de la carte à la div media
-    media.appendChild(mediaCard);
+    manageMedia(mediaItem, index)
   })
 }
 
+function manageMedia(mediaItem, index) {
+  const mediaCard = mediaTemplate(mediaItem).getMediaCardDOM(index);
+  const mediaContainer = document.querySelector(".media");
+  mediaContainer.appendChild(mediaCard);
 
+  const fullHeart = mediaCard.querySelector(".fa-heart");
+  const likesText = mediaCard.querySelector(".media-likes span");
+
+  fullHeart.addEventListener("click", () => {
+
+    // Récupère la valeur actuelle
+    let currentLikes = parseInt(likesText.textContent, 10); 
+
+    // Incrémente
+    currentLikes++;
+
+    // Met à jour l'affichage
+    likesText.textContent = currentLikes;
+
+    // Met à jour le total général
+    updateTotalLikes();
+  });
+
+
+  function updateTotalLikes() {
+    const likeElements = document.querySelectorAll(".media-likes span");
+    let totalLikes = 0;
+  
+    likeElements.forEach(likeElement => {
+      totalLikes += parseInt(likeElement.textContent, 10);
+    });
+  
+    // Sélectionne la div où afficher le total des likes
+    const counterLikeDiv = document.querySelector(".counter_like_div");
+  
+    if (counterLikeDiv) {
+      // Réinitialiser le contenu de la div avant de l'actualiser
+      counterLikeDiv.innerHTML = "";
+  
+      // Créer un span pour afficher le total des likes
+      const totalLikesText = document.createElement("span");
+      totalLikesText.id = "total_like";
+      totalLikesText.textContent = `${totalLikes} likes`; 
+  
+      //Créer l'icône cœur (fullHeart)
+      const fullHeart = document.createElement("i");
+      fullHeart.classList.add("fa-solid", "fa-heart");
+      fullHeart.id ="backFullHeart"
+     
+  
+      // Ajouter le texte et l'icône à la div
+      counterLikeDiv.appendChild(totalLikesText);
+      counterLikeDiv.appendChild(fullHeart);
+    } else {
+      console.error("counterLikeDiv introuvable !");
+    }
+  
+    return totalLikes; // Retourne le total des likes
+  }
+  
+  // Appeler la fonction une première fois pour afficher les likes dès le départ
+  updateTotalLikes();
+
+
+
+
+
+  // const mediaObject = mediaTemplate(mediaItem); // Récupère l'objet retourné par mediaTemplate
+
+  // // Appeler updateTotalLikes() sur l'objet mediaObject
+  // let totalLikes = mediaObject.updateTotalLikes();
+
+
+  // // Affichage dans la console pour vérifier
+  // console.log(totalLikes);
+
+  // Initialise l'index sur 0
+  let currentIndex = 0;
+
+  // Récupère les images et kes vidéos
+  const mediaElements = document.querySelectorAll(".media-img, .media-video");
+
+  // Ajout d'un écouteur d'événements à chaque images
+  mediaElements.forEach(media => {
+    media.addEventListener("click", openLightbox);
+  });
+
+  // Ajout d'un écouter d'évènements
+  cross.addEventListener("click", closeLightbox);
+
+  // Ajout d'écouteurs d'événements pour les chevrons
+  chevronLeft.addEventListener("click", navigateLightbox);
+  chevronRight.addEventListener("click", navigateLightbox);
+
+  function updateLightboxMedia(mediaElement) {
+    lightboxMedia.innerHTML = ""; // Supprime l'ancien média
+
+    let newContent;
+    if (mediaElement.tagName === "IMG") {
+      newContent = `<img src="${mediaElement.src}" alt="${mediaElement.alt}" class="lightbox-img">`;
+    } else if (mediaElement.tagName === "VIDEO") {
+      const videoAlt = mediaElement.getAttribute('data-alt'); // Récupère l'attribut data-al
+      newContent = `<video src="${mediaElement.src}" controls class="lightbox-video" data-alt="${videoAlt}"></video>`;
+    }
+    lightboxMedia.innerHTML = newContent;
+    lightboxMedia.appendChild(lightboxCaption);
+
+    // Mettre à jour la légende avec la valeur appropriée
+    if (mediaElement.tagName === "IMG") {
+      lightboxCaption.innerText = mediaElement.alt;
+    } else if (mediaElement.tagName === "VIDEO") {
+      lightboxCaption.innerText = mediaElement.getAttribute('data-alt');
+    }
+
+  }
+
+  function openLightbox(event) {
+    const clickedMedia = event.target;
+    currentIndex = parseInt(clickedMedia.getAttribute("data-index"));
+
+    updateLightboxMedia(clickedMedia);
+    lightboxModal.style.display = "flex";
+  }
+
+  function navigateLightbox(event) {
+    const isLeft = event.target.id === "chevronLeft";
+    currentIndex = isLeft ? currentIndex - 1 : currentIndex + 1;
+
+    // Vérifie les limites
+    if (currentIndex < 0) currentIndex = mediaElements.length - 1;
+    if (currentIndex >= mediaElements.length) currentIndex = 0;
+
+    updateLightboxMedia(mediaElements[currentIndex]);
+  }
+
+  function closeLightbox() {
+    lightboxModal.style.display = "none";
+  }
+}
 

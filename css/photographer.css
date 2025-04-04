@@ -130,12 +130,21 @@ form input {
     background-color: #DB8876;
     border-radius: 5px 5px 0 0;
     position: fixed;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
 }
 
+#total_like,
 .price {
     margin: 10px;
     font-size: 24px;
     font-weight: 500;
+}
+
+#backFullHeart {
+    font-size: 21px;
+    padding-right: 30px;
 }
 
 /* Mise en forme des médias */

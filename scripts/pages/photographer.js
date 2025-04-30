@@ -229,20 +229,6 @@ export function manageMedia(mediaItem, index) {
 
     updateLightboxMedia(clickedMedia);
     lightboxModal.style.display = "flex";
-    // Ajouter un écouteur d'événements pour les touches du clavier
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "ArrowLeft") {
-        navigateLightbox({target: {id: "chevronLeft"}});
-      }
-      if (e.key === "ArrowRight") {
-        navigateLightbox({target: {id: "chevronRight"}});
-      }
-      if (e.key === "Escape") {
-        closeLightbox();
-      }
-    });
-
-
   }
 
   function navigateLightbox(event) {
@@ -283,6 +269,3 @@ closeButton.addEventListener('click', closeModal);
 
 // Appel de la fonction exportForm
 exportForm();
-
-// sortAndDisplayMedia();
-// displayMedia();

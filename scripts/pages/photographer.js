@@ -1,3 +1,10 @@
+import {photographerTemplate} from  "../templates/photographer.js";
+import {mediaTemplate} from  "../templates/media.js";
+import {exportForm, displayModal, closeModal} from "../utils/contactForm.js";
+import {createMediaFiltre} from "../utils/sortMedia.js";
+import {handleLike, updateTotalLikes} from "../utils/like.js";
+
+
 function getPhotographersId() {
   // Récupère la partie query de l'url (tout ce qui se trouve après le ?)
   const params = new URLSearchParams(window.location.search);
@@ -10,7 +17,7 @@ const photographerId = getPhotographersId();
 
 let mediaData = [];
 
-async function getPhotographerData(photographerId) {
+export async function getPhotographerData(photographerId) {
   try {
     // Récupère les informations du photographe et ses médias associés
     const response = await fetch("../../data/photographers.json");
@@ -55,54 +62,11 @@ const counterLikeDiv = document.createElement("div");
 counterLikeDiv.classList.add("counter_like_div");
 priceCounterLikeDiv.appendChild(counterLikeDiv);
 
-
-// Ajout d'une div mediaFiltre
-const mediaFiltre = document.createElement("div");
-mediaFiltre.classList.add("media-filtre");
-main.appendChild(mediaFiltre);
-
-// Ajout du label
-const label = document.createElement("label");
-label.setAttribute("for", "mySelect");
-label.textContent = "Trier par ";
-label.classList.add("labelSelect")
-
-// Ajout du select
-const select = document.createElement("select");
-select.setAttribute("id", "mySelect");
-
-// Création des options dans un tableau
-const options = [
-    {text: "Popularité", value: "popularity"},
-    {text: "Date", value: "date"},
-    {text: "Titre", value: "title"}
-];
-
-// Ajout des options au select
-options.forEach(option => {
-    const optionElement = document.createElement("option");
-    optionElement.textContent = option.text;
-    optionElement.value = option.value;
-    select.appendChild(optionElement);
-});
-
-// Ajout du label et du select au conteneur mediaFiltre
-mediaFiltre.appendChild(label);
-mediaFiltre.appendChild(select);
-
-
-
-// Ajout de l'écouteur d'événement pour détecter les changements de sélection
-select.addEventListener("change", () => {
-  const selectedValue = select.value;
-  sortAndDisplayMedia(selectedValue);
-});
-
-
 // Ajout d'une div media
 const media = document.createElement("div");
 media.classList.add("media");
 main.appendChild(media);
+
 
 // Ajout de la div lightboxModal
 const lightboxModal = document.createElement("div");
@@ -156,6 +120,7 @@ lightboxMedia.appendChild(lightboxCaption);
 
 
 
+
 // Récupère la promesse retournée par la fonction getPhotographerData
 getPhotographerData(photographerId).then((PhotographerData) => {
   if (PhotographerData && PhotographerData.photographer) {
@@ -190,158 +155,43 @@ getPhotographerData(photographerId).then((PhotographerData) => {
     const price = photographerCard.querySelector(".price");
     priceCounterLikeDiv.appendChild(price);
 
-
-
     parentElement.appendChild(photographerCard);
 
     // Afiche les médias associés au photographe
     if (PhotographerData.media) {
+      createMediaFiltre(PhotographerData.media);
       PhotographerData.media.forEach((mediaItem, index) => {
         manageMedia(mediaItem, index)
 
       });
     }
-
-
   }
 });
 
-// const updateTotalLikes = (totalLikes) => {
-//   const totalLikesElement = document.createElement("span");
-//   totalLikesElement.classList.add("total-likes");
-//   if (totalLikesElement) {
-//     totalLikesElement.textContent = `${totalLikes}`;
-//   }
-// };
-
-
-function sortAndDisplayMedia(criteria) {
-  let sortedData;
-
-  // Utilisation d'un switch pour déterminer le critère de tri
-  switch (criteria) {
-    case "popularity":  //(nombre de likes décroissant)
-
-      // Crée une copie du tableau mediaData pour éviter de modifier l'original
-      sortedData = [...mediaData].sort((a, b) => b.likes - a.likes);
-      break;
-    case "date" :  //(du plus récent au plus ancien)
-      sortedData = [...mediaData].sort((a, b) => new Date(b.date) - new Date(a.date));
-      break;
-    case "title" :  //(ordre alphabétique)
-      sortedData = [...mediaData].sort((a, b) => {
-
-        // Vérifie que a.title et b.title sont des chaînes de caractères
-        if (typeof a.title === 'string' && typeof b.title === 'string') {
-          return a.title.localeCompare(b.title);
-        }
-        // Si l'un des titres n'est pas une chaîne, retourne 0 (pas de changement d'ordre)
-        return 0;
-      });
-      break;
-    default :  // Utilise les données originales si le critère ne correspond à rien
-    sortedData = mediaData;
-  }
-  // Affiche les médias triés
-  displayMedia(sortedData);
-}
-
-function displayMedia(data) {
-
-  // Vide la div avant d'afficher les medias triés
-  media.innerHTML = "";
-
-  // Parcourt chaque élément du tableau de données
-  data.forEach((mediaItem, index) => {
-    manageMedia(mediaItem, index)
-  })
-}
-
-function manageMedia(mediaItem, index) {
+export function manageMedia(mediaItem, index) {
   const mediaCard = mediaTemplate(mediaItem).getMediaCardDOM(index);
   const mediaContainer = document.querySelector(".media");
   mediaContainer.appendChild(mediaCard);
 
-  const fullHeart = mediaCard.querySelector(".fa-heart");
-  const likesText = mediaCard.querySelector(".media-likes span");
-
-  fullHeart.addEventListener("click", () => {
-
-    // Récupère la valeur actuelle
-    let currentLikes = parseInt(likesText.textContent, 10); 
-
-    // Incrémente
-    currentLikes++;
-
-    // Met à jour l'affichage
-    likesText.textContent = currentLikes;
-
-    // Met à jour le total général
-    updateTotalLikes();
-  });
-
-
-  function updateTotalLikes() {
-    const likeElements = document.querySelectorAll(".media-likes span");
-    let totalLikes = 0;
-  
-    likeElements.forEach(likeElement => {
-      totalLikes += parseInt(likeElement.textContent, 10);
-    });
-  
-    // Sélectionne la div où afficher le total des likes
-    const counterLikeDiv = document.querySelector(".counter_like_div");
-  
-    if (counterLikeDiv) {
-      // Réinitialiser le contenu de la div avant de l'actualiser
-      counterLikeDiv.innerHTML = "";
-  
-      // Créer un span pour afficher le total des likes
-      const totalLikesText = document.createElement("span");
-      totalLikesText.id = "total_like";
-      totalLikesText.textContent = `${totalLikes} likes`; 
-  
-      //Créer l'icône cœur (fullHeart)
-      const fullHeart = document.createElement("i");
-      fullHeart.classList.add("fa-solid", "fa-heart");
-      fullHeart.id ="backFullHeart"
-     
-  
-      // Ajouter le texte et l'icône à la div
-      counterLikeDiv.appendChild(totalLikesText);
-      counterLikeDiv.appendChild(fullHeart);
-    } else {
-      console.error("counterLikeDiv introuvable !");
-    }
-  
-    return totalLikes; // Retourne le total des likes
-  }
-  
-  // Appeler la fonction une première fois pour afficher les likes dès le départ
+  handleLike(mediaCard, index);
   updateTotalLikes();
 
-
-
-
-
-  // const mediaObject = mediaTemplate(mediaItem); // Récupère l'objet retourné par mediaTemplate
-
-  // // Appeler updateTotalLikes() sur l'objet mediaObject
-  // let totalLikes = mediaObject.updateTotalLikes();
-
-
-  // // Affichage dans la console pour vérifier
-  // console.log(totalLikes);
 
   // Initialise l'index sur 0
   let currentIndex = 0;
 
-  // Récupère les images et kes vidéos
+  // Récupère les images et les vidéos
   const mediaElements = document.querySelectorAll(".media-img, .media-video");
 
   // Ajout d'un écouteur d'événements à chaque images
   mediaElements.forEach(media => {
     media.addEventListener("click", openLightbox);
+    media.addEventListener("keydown", (e) => {
+      console.log(e.key);
+      if (e.key === "Enter") {
+        openLightbox(e);
+      }
+    });
   });
 
   // Ajout d'un écouter d'évènements
@@ -379,6 +229,20 @@ function manageMedia(mediaItem, index) {
 
     updateLightboxMedia(clickedMedia);
     lightboxModal.style.display = "flex";
+    // Ajouter un écouteur d'événements pour les touches du clavier
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") {
+        navigateLightbox({target: {id: "chevronLeft"}});
+      }
+      if (e.key === "ArrowRight") {
+        navigateLightbox({target: {id: "chevronRight"}});
+      }
+      if (e.key === "Escape") {
+        closeLightbox();
+      }
+    });
+
+
   }
 
   function navigateLightbox(event) {
@@ -394,6 +258,31 @@ function manageMedia(mediaItem, index) {
 
   function closeLightbox() {
     lightboxModal.style.display = "none";
+    document.removeEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") {
+        navigateLightbox({target: {id: "chevronLeft"}});
+      }
+      if (e.key === "ArrowRight") {
+        navigateLightbox({target: {id: "chevronRight"}});
+      } 
+      if (e.key === "Escape") {
+        closeLightbox();
+      }
+    });
   }
 }
 
+
+// Ajout d'un écouteur d'évènement pour remplacer onclick
+const openModalButton = document.querySelector('.contact_button');
+openModalButton.addEventListener('click', displayModal);
+
+// Ajout d'un écouteur d'évènement pour remplacer onclick
+const closeButton = document.querySelector('.close_button');
+closeButton.addEventListener('click', closeModal);
+
+// Appel de la fonction exportForm
+exportForm();
+
+// sortAndDisplayMedia();
+// displayMedia();

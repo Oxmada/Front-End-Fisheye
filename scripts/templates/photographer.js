@@ -28,9 +28,11 @@ export const photographerTemplate = (data) => {
     p1.textContent = `${city}, ${country}`;
     p1.classList.add("location");
 
+    const blockquote = document.createElement("blockquote");
+    blockquote.classList.add("tagline");
     const p2 = document.createElement("p");
     p2.textContent = tagline;
-    p2.classList.add("tagline");
+    blockquote.appendChild(p2);
 
     const p3 = document.createElement("p");
     p3.textContent = `${price}€/jour`;
@@ -38,7 +40,7 @@ export const photographerTemplate = (data) => {
 
     article.appendChild(link);
     article.appendChild(p1);
-    article.appendChild(p2);
+    article.appendChild(blockquote);
     article.appendChild(p3);
 
     return article;

@@ -3,51 +3,34 @@ import {mediaTemplate} from  "../templates/media.js";
 import {exportForm, displayModal, closeModal} from "../utils/contactForm.js";
 import {createMediaFiltre} from "../utils/sortMedia.js";
 import {handleLike, updateTotalLikes} from "../utils/like.js";
+import {trapFocus} from "../utils/trapFocus.js";
 
 
-function getPhotographersId() {
-  // Récupère la partie query de l'url (tout ce qui se trouve après le ?)
-  const params = new URLSearchParams(window.location.search);
-
-  // Récupère la valeur du paramètre "id" et la retourne.
-  return params.get("id");
-}
+const getPhotographersId = () => new URLSearchParams(window.location.search).get("id");
 
 const photographerId = getPhotographersId();
 
 let mediaData = [];
 
-export async function getPhotographerData(photographerId) {
+export const getPhotographerData = async (photographerId) => {
   try {
-    // Récupère les informations du photographe et ses médias associés
     const response = await fetch("../../data/photographers.json");
-    if (!response.ok) {
-      throw new Error(`Erreur HTTP ! Status: ${response.status}`);
-    }
+    if (!response.ok) throw new Error(`Erreur HTTP ! Status: ${response.status}`);
     const data = await response.json();
 
-    // Trouve le photographe par ID
-    const photographer = data.photographers.find(
-      (photographer) => photographer.id == photographerId
-    );
-
-    // Filtre les médias associés au photographe
-    const media = data.media.filter(
-      (item) => item.photographerId == photographerId
-    );
+    const photographer = data.photographers.find(p => p.id == photographerId);
+    const media = data.media.filter(m => m.photographerId == photographerId);
 
     mediaData = media;
 
     console.log("Médias filtrés :", media);
 
-    return {
-      photographer,
-      media,
-    };
+    return { photographer, media };
   } catch (error) {
     console.error("Erreur lors de la récupération des données :", error);
   }
-}
+};
+
 
 // Sélectionne le body & main
 const body = document.querySelector("body");
@@ -99,17 +82,26 @@ modalContainer.appendChild(navigationRight);
 const chevronLeft = document.createElement("i");
 chevronLeft.classList.add("fa-solid", "fa-chevron-left");
 chevronLeft.id = "chevronLeft";
+chevronLeft.setAttribute("tabindex", 0);
+chevronLeft.setAttribute("aria-label", "Revenir au média précédent")
+chevronLeft.setAttribute("role", "button");
 navigationLeft.appendChild(chevronLeft);
 
 const chevronRight = document.createElement("i");
 chevronRight.classList.add("fa-solid", "fa-chevron-right");
 chevronRight.id = "chevronRight"
+chevronRight.setAttribute("tabindex", 0);
+chevronRight.setAttribute("aria-label", "Aller au média suivant")
+chevronRight.setAttribute("role", "button");
 navigationRight.appendChild(chevronRight);
 
 // Création de l'icône croix 
 const cross = document.createElement("i");
 cross.classList.add("fa-solid", "fa-xmark");
 cross.id ="cross"
+cross.setAttribute("tabindex", 0);
+cross.setAttribute("aria-label", "Femer la lightbox")
+cross.setAttribute("role", "button");
 navigationRight.appendChild(cross);
 
 // Création de la légende lightboxCaption
@@ -168,7 +160,7 @@ getPhotographerData(photographerId).then((PhotographerData) => {
   }
 });
 
-export function manageMedia(mediaItem, index) {
+export const manageMedia = (mediaItem, index) => {
   const mediaCard = mediaTemplate(mediaItem).getMediaCardDOM(index);
   const mediaContainer = document.querySelector(".media");
   mediaContainer.appendChild(mediaCard);
@@ -176,87 +168,84 @@ export function manageMedia(mediaItem, index) {
   handleLike(mediaCard, index);
   updateTotalLikes();
 
-
-  // Initialise l'index sur 0
   let currentIndex = 0;
-
-  // Récupère les images et les vidéos
   const mediaElements = document.querySelectorAll(".media-img, .media-video");
 
-  // Ajout d'un écouteur d'événements à chaque images
-  mediaElements.forEach(media => {
-    media.addEventListener("click", openLightbox);
-    media.addEventListener("keydown", (e) => {
-      console.log(e.key);
-      if (e.key === "Enter") {
-        openLightbox(e);
-      }
-    });
-  });
-
-  // Ajout d'un écouter d'évènements
-  cross.addEventListener("click", closeLightbox);
-
-  // Ajout d'écouteurs d'événements pour les chevrons
-  chevronLeft.addEventListener("click", navigateLightbox);
-  chevronRight.addEventListener("click", navigateLightbox);
-
-  function updateLightboxMedia(mediaElement) {
-    lightboxMedia.innerHTML = ""; // Supprime l'ancien média
+  const updateLightboxMedia = (mediaElement) => {
+    lightboxMedia.innerHTML = "";
 
     let newContent;
     if (mediaElement.tagName === "IMG") {
-      newContent = `<img src="${mediaElement.src}" alt="${mediaElement.alt}" class="lightbox-img">`;
+      const altText = mediaElement.alt;
+      newContent = `<img src="${mediaElement.src}" alt="${altText}" class="lightbox-img" tabindex="0" aria-label="Image intitulée : ${altText}">`;
+      lightboxCaption.innerText = altText;
     } else if (mediaElement.tagName === "VIDEO") {
-      const videoAlt = mediaElement.getAttribute('data-alt'); // Récupère l'attribut data-al
-      newContent = `<video src="${mediaElement.src}" controls class="lightbox-video" data-alt="${videoAlt}"></video>`;
+      const videoAlt = mediaElement.getAttribute("data-alt");
+      newContent = `<video src="${mediaElement.src}" controls class="lightbox-video" tabindex="0" aria-label="Vidéo intitulée : ${videoAlt}"></video>`;
+      lightboxCaption.innerText = videoAlt;
     }
+
     lightboxMedia.innerHTML = newContent;
     lightboxMedia.appendChild(lightboxCaption);
+  };
 
-    // Mettre à jour la légende avec la valeur appropriée
-    if (mediaElement.tagName === "IMG") {
-      lightboxCaption.innerText = mediaElement.alt;
-    } else if (mediaElement.tagName === "VIDEO") {
-      lightboxCaption.innerText = mediaElement.getAttribute('data-alt');
-    }
-
-  }
-
-  function openLightbox(event) {
+  const openLightbox = (event) => {
     const clickedMedia = event.target;
     currentIndex = parseInt(clickedMedia.getAttribute("data-index"));
-
     updateLightboxMedia(clickedMedia);
     lightboxModal.style.display = "flex";
-  }
+    trapFocus(lightboxModal);
+  };
 
-  function navigateLightbox(event) {
+  const navigateLightbox = (event) => {
     const isLeft = event.target.id === "chevronLeft";
     currentIndex = isLeft ? currentIndex - 1 : currentIndex + 1;
-
-    // Vérifie les limites
     if (currentIndex < 0) currentIndex = mediaElements.length - 1;
     if (currentIndex >= mediaElements.length) currentIndex = 0;
-
     updateLightboxMedia(mediaElements[currentIndex]);
-  }
+  };
 
-  function closeLightbox() {
+  const closeLightbox = () => {
     lightboxModal.style.display = "none";
     document.removeEventListener("keydown", (e) => {
-      if (e.key === "ArrowLeft") {
-        navigateLightbox({target: {id: "chevronLeft"}});
-      }
-      if (e.key === "ArrowRight") {
-        navigateLightbox({target: {id: "chevronRight"}});
-      } 
-      if (e.key === "Escape") {
-        closeLightbox();
-      }
+      if (e.key === "ArrowLeft") navigateLightbox({ target: { id: "chevronLeft" } });
+      if (e.key === "ArrowRight") navigateLightbox({ target: { id: "chevronRight" } });
+      if (e.key === "Escape") closeLightbox();
     });
-  }
-}
+  };
+
+  mediaElements.forEach(media => {
+    media.addEventListener("click", openLightbox);
+    media.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") openLightbox(e);
+    });
+  });
+
+  chevronLeft.addEventListener("click", navigateLightbox);
+  chevronRight.addEventListener("click", navigateLightbox);
+  cross.addEventListener("click", closeLightbox);
+
+  chevronLeft.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      navigateLightbox({ target: { id: "chevronLeft" } });
+    }
+  });
+
+  chevronRight.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      navigateLightbox({ target: { id: "chevronRight" } });
+    }
+  });
+
+  cross.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      closeLightbox();
+    }
+  });
+};
 
 
 // Ajout d'un écouteur d'évènement pour remplacer onclick

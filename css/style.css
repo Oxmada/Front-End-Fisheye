@@ -2,7 +2,8 @@
 
 body {
     font-family: "DM Sans", sans-serif;
-    margin: 0;
+    max-width: 1440px;
+    margin: auto;
 }
 
 
@@ -21,7 +22,7 @@ h1 {
 
 .logo {
     height: 50px;
-    margin: 50px 0px 50px 100px;
+    padding: 50px 0px 50px 100px;
 }
 
 .photographer_section {

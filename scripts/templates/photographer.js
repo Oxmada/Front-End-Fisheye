@@ -1,9 +1,8 @@
-export function photographerTemplate(data) {
+export const photographerTemplate = (data) => {
   const { name, id, portrait, city, country, tagline, price } = data;
-
   const picture = `assets/photographers/${portrait}`;
 
-  function getUserCardDOM() {
+  const getUserCardDOM = () => {
     const article = document.createElement("article");
     article.classList.add("photographer-article");
 
@@ -43,9 +42,10 @@ export function photographerTemplate(data) {
     article.appendChild(p3);
 
     return article;
-  }
-  return {name, id, picture, city, country, tagline, price, getUserCardDOM};
-}
+  };
+
+  return { name, id, picture, city, country, tagline, price, getUserCardDOM };
+};
 
 
 

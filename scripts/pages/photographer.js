@@ -14,7 +14,7 @@ let mediaData = [];
 
 export const getPhotographerData = async (photographerId) => {
   try {
-    const response = await fetch("../../data/photographers.json");
+    const response = await fetch("data/photographers.json");
     if (!response.ok) throw new Error(`Erreur HTTP ! Status: ${response.status}`);
     const data = await response.json();
 

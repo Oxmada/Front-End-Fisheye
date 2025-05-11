@@ -2,7 +2,7 @@
 
 ---
 
-## 🎮 Projet Fisheye
+## 📷 Projet Fisheye
 Développement d’un site web permettant d’afficher des médias de manière dynamique selon le profil du photographe, avec un accent sur l’accessibilité.
 
 ---

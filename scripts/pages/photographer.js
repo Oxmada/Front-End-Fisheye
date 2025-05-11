@@ -19,8 +19,10 @@ export const getPhotographerData = async (photographerId) => {
 		if (!response.ok) throw new Error(`Erreur HTTP ! Status: ${response.status}`);
 		const data = await response.json();
 
-		const photographer = data.photographers.find(p => p.id == photographerId);
-		const media = data.media.filter(m => m.photographerId == photographerId);
+		const id = Number(photographerId); // convertis en nombre
+
+		const photographer = data.photographers.find(p => p.id === id);
+		const media = data.media.filter(m => m.photographerId === id);
 
 		console.log("Médias filtrés :", media);
 

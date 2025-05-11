@@ -1,4 +1,4 @@
-![Logo Fisheye](assets/images/logo.pngLogo.png)
+![Logo Fisheye](assets/images/logo.png)
 
 ---
 

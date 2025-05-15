@@ -10,9 +10,6 @@ const getPhotographersId = () => new URLSearchParams(window.location.search).get
 
 const photographerId = getPhotographersId();
 
-
-
-
 export const getPhotographerData = async (photographerId) => {
 	try {
 		const response = await fetch("data/photographers.json");
@@ -51,7 +48,6 @@ const media = document.createElement("div");
 media.classList.add("media");
 main.appendChild(media);
 
-
 // Ajout de la div lightboxModal
 const lightboxModal = document.createElement("div");
 lightboxModal.classList.add("lightbox-modal");
@@ -62,12 +58,10 @@ const modalContainer = document.createElement("div");
 modalContainer.classList.add("modalContainer");
 lightboxModal.appendChild(modalContainer);
 
-
 // Ajout de la div navigationLeft
 const navigationLeft = document.createElement("div");
 navigationLeft.classList.add("navigation-left");
 modalContainer.appendChild(navigationLeft);
-
 
 // Création de l'élément multimédia
 const lightboxMedia = document.createElement("div");
@@ -88,6 +82,7 @@ chevronLeft.setAttribute("aria-label", "Revenir au média précédent");
 chevronLeft.setAttribute("role", "button");
 navigationLeft.appendChild(chevronLeft);
 
+// Création 
 const chevronRight = document.createElement("i");
 chevronRight.classList.add("fa-solid", "fa-chevron-right");
 chevronRight.id = "chevronRight";
@@ -95,6 +90,7 @@ chevronRight.setAttribute("tabindex", 0);
 chevronRight.setAttribute("aria-label", "Aller au média suivant");
 chevronRight.setAttribute("role", "button");
 navigationRight.appendChild(chevronRight);
+
 
 // Création de l'icône croix 
 const cross = document.createElement("i");
@@ -105,13 +101,12 @@ cross.setAttribute("aria-label", "Femer la lightbox");
 cross.setAttribute("role", "button");
 navigationRight.appendChild(cross);
 
+
 // Création de la légende lightboxCaption
 const lightboxCaption = document.createElement("div");
 lightboxCaption.id = "lightboxCaption";
 lightboxCaption.classList.add("caption");
 lightboxMedia.appendChild(lightboxCaption);
-
-
 
 
 // Récupère la promesse retournée par la fonction getPhotographerData
@@ -120,7 +115,6 @@ getPhotographerData(photographerId).then((PhotographerData) => {
 		const photographerCard = photographerTemplate(
 			PhotographerData.photographer
 		).getUserCardDOM();
-
 
 		const parentElement = document.querySelector(".photograph-header");
 
@@ -155,18 +149,18 @@ getPhotographerData(photographerId).then((PhotographerData) => {
 			createMediaFiltre(PhotographerData.media);
 			PhotographerData.media.forEach((mediaItem, index) => {
 				manageMedia(mediaItem, index);
-
 			});
 		}
 	}
 });
+
 
 export const manageMedia = (mediaItem, index) => {
 	const mediaCard = mediaTemplate(mediaItem).getMediaCardDOM(index);
 	const mediaContainer = document.querySelector(".media");
 	mediaContainer.appendChild(mediaCard);
 
-	handleLike(mediaCard, index);
+	handleLike(mediaCard);
 	updateTotalLikes();
 
 	let currentIndex = 0;
@@ -196,6 +190,9 @@ export const manageMedia = (mediaItem, index) => {
 		updateLightboxMedia(clickedMedia);
 		lightboxModal.style.display = "flex";
 		trapFocus(lightboxModal);
+
+		// Ajout du listener clavier global pour la lightbox
+		document.addEventListener("keydown", keydownHandler);
 	};
 
 	const navigateLightbox = (event) => {
@@ -206,13 +203,17 @@ export const manageMedia = (mediaItem, index) => {
 		updateLightboxMedia(mediaElements[currentIndex]);
 	};
 
+	const keydownHandler = (e) => {
+	if (e.key === "ArrowLeft") navigateLightbox({ target: { id: "chevronLeft" } });
+	if (e.key === "ArrowRight") navigateLightbox({ target: { id: "chevronRight" } });
+	if (e.key === "Escape") closeLightbox();
+	};
+
 	const closeLightbox = () => {
-		lightboxModal.style.display = "none";
-		document.removeEventListener("keydown", (e) => {
-			if (e.key === "ArrowLeft") navigateLightbox({ target: { id: "chevronLeft" } });
-			if (e.key === "ArrowRight") navigateLightbox({ target: { id: "chevronRight" } });
-			if (e.key === "Escape") closeLightbox();
-		});
+	lightboxModal.style.display = "none";
+
+	// Retire le listener clavier global
+	document.removeEventListener("keydown", keydownHandler);
 	};
 
 	mediaElements.forEach(media => {

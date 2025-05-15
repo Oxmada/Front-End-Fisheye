@@ -3,7 +3,7 @@ export const updateTotalLikes = () => {
 	let totalLikes = 0;
 	
 	likeElements.forEach(likeElement => {
-		totalLikes += parseInt(likeElement.textContent, 10);
+		totalLikes += parseInt(likeElement.textContent);
 	});
 	
 	const counterLikeDiv = document.querySelector(".counter_like_div");
@@ -35,7 +35,7 @@ export const handleLike = (mediaCard) => {
 	
 	const incrementLikes = () => {
 		if (!isClicked) {
-			let currentLikes = parseInt(likesText.textContent, 10);
+			let currentLikes = parseInt(likesText.textContent);
 			likesText.textContent = ++currentLikes;
 			updateTotalLikes();
 			isClicked = true;

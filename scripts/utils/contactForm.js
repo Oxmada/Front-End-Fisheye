@@ -19,13 +19,11 @@ export const exportForm = () => {
 	const closeButton = document.querySelector(".close_button");
 	closeButton.addEventListener("click", closeModal);
 	closeButton.addEventListener("keydown", (e) => {
-		if (e.key === "Enter" || e.key === " ") {
-			e.preventDefault();
+		if (e.key === "Enter") {
 			closeModal();
 		}
 	});
 };
-
 
 export const displayModal = () => {
 	const modal = document.getElementById("contact_modal");

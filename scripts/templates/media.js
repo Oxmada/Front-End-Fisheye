@@ -1,11 +1,10 @@
 export const mediaTemplate = (data) => {
 	const { id, photographerId, title, image, video, likes: initialLikes, date, price } = data;
 
-	let mediaElement = image
-		? `assets/albums/${photographerId}/${image}`
-		: video
-			? `assets/albums/${photographerId}/${video}`
-			: null;
+	let mediaElement = 
+		image ? `assets/albums/${photographerId}/${image}`:
+		video ? `assets/albums/${photographerId}/${video}`: 
+		null;
 	if (!mediaElement) {
 		console.error("Aucun média (image ou vidéo) trouvé pour", title);
 		return;

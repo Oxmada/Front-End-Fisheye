@@ -58,7 +58,7 @@ export const sortAndDisplayMedia = (allMedia, criteria) => {
 	displayMedia(sortedData);
 };
 
-export const displayMedia = (data) => {
+const displayMedia = (data) => {
 	document.querySelector(".media").innerHTML = "";
 
 	console.log(data);
